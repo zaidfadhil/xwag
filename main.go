@@ -7,9 +7,11 @@ import (
 	"net/http"
 )
 
-var file string
-var address string
-var port int
+var (
+	file    string
+	address string
+	port    int
+)
 
 func main() {
 
