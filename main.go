@@ -7,18 +7,28 @@ import (
 	"net/http"
 )
 
+var file string
+var address string
+var port int
+
 func main() {
 
-	var file string
-	var port int
 	flag.StringVar(&file, "file", "", "swagger file path.")
-	flag.IntVar(&port, "port", 50166, "swagger port.")
+	flag.StringVar(&address, "addr", "localhost", "server address.")
+	flag.IntVar(&port, "port", 50166, "server port.")
 	flag.Parse()
 
-	addr := fmt.Sprintf("%v:%v", "localhost", port)
+	addr := fmt.Sprintf("%v:%v", address, port)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		html := fmt.Sprintf(htmlindex, "http://"+addr+"/swagger.yaml")
+		var scheme string
+		if r.TLS != nil {
+			scheme = "https://"
+		} else {
+			scheme = "http://"
+		}
+		hostURL := scheme + r.Host + r.URL.String() + "/swagger.yaml"
+		html := fmt.Sprintf(htmlindex, hostURL)
 		fmt.Fprintf(w, html)
 	})
 
@@ -44,7 +54,9 @@ var htmlindex = `
     <meta charset="UTF-8">
     <title>Swagger UI</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css" >
-    <style>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"> </script>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js"> </script>
+		<style>
       html
       {
         box-sizing: border-box;
@@ -70,8 +82,7 @@ var htmlindex = `
   </head>    
   <body>
     <div id="swagger-ui"></div>    
-    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"> </script>
-    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js"> </script>    <script>
+	<script>
     window.onload = function() {          
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
