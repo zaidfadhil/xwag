@@ -47,15 +47,14 @@ func main() {
 }
 
 var htmlindex = `
-<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <title>Swagger UI</title>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css" >
-    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"> </script>
-    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js"> </script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css" >
+    <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"> </script>
+    <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-standalone-preset.js"> </script>
 		<style>
       html
       {
@@ -84,9 +83,8 @@ var htmlindex = `
     <div id="swagger-ui"></div>    
 	<script>
     window.onload = function() {          
-      // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        "dom_id": "#swagger-ui",
+        dom_id: "#swagger-ui",
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,
