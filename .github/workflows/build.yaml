@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: build
+    strategy:
+      matrix:
+        go-version: ["1.20"]
+        platform: [ubuntu-latest]
+        arch: [amd64, arm64]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.arch }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+          arch: ${{ matrix.arch }}
+
+      - name: Install dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Build on ${{ matrix.arch }}
+        run: |
+          GOARCH=${{ matrix.arch }} go build -o xwag_${{ matrix.arch }}
+
+      - name: Upload artifacts for ${{ matrix.arch }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: xwag_${{ matrix.arch }}
+          path: xwag_${{ matrix.arch }}
+
