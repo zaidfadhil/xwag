@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -17,7 +18,6 @@ func TestSwaggerHandler(t *testing.T) {
 	}
 
 	res := httptest.NewRecorder()
-
 	swaggerHandler(res, req)
 
 	if res.Code != http.StatusOK {
@@ -25,17 +25,18 @@ func TestSwaggerHandler(t *testing.T) {
 	}
 
 	contentType := res.Header().Get("Content-Type")
-	if contentType != "text/html; charset=utf-8" {
-		t.Errorf("unexpected Content-Type header: got %s, want text/html; charset=utf-8", contentType)
+	expectedContentType := "text/html; charset=utf-8"
+	if contentType != expectedContentType {
+		t.Errorf("unexpected Content-Type header: got %s, want %s", contentType, expectedContentType)
 	}
 
-	expectedHTML := fmt.Sprintf(htmlindex, "swagger.yaml")
-	body, err := ioutil.ReadAll(res.Body)
+	expectedHTML := fmt.Sprintf(htmlTemplate, "swagger.yaml")
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(body[:len(expectedHTML)]) != expectedHTML {
-		t.Errorf("unexpected response body: got %s, want %s", body, expectedHTML)
+	if string(body) != expectedHTML {
+		t.Errorf("unexpected response body:\nGot:\n%s\n\nWant:\n%s", string(body), expectedHTML)
 	}
 }
 
@@ -48,7 +49,6 @@ func TestSwaggerYAMLHandler(t *testing.T) {
 	}
 
 	res := httptest.NewRecorder()
-
 	swaggerYAMLHandler(res, req)
 
 	if res.Code != http.StatusOK {
@@ -56,21 +56,22 @@ func TestSwaggerYAMLHandler(t *testing.T) {
 	}
 
 	contentType := res.Header().Get("Content-Type")
-	if contentType != "application/yaml" {
-		t.Errorf("unexpected Content-Type header: got %s, want application/yaml", contentType)
+	expectedContentType := "application/yaml"
+	if contentType != expectedContentType {
+		t.Errorf("unexpected Content-Type header: got %s, want %s", contentType, expectedContentType)
 	}
 
-	swaggerFile, err := ioutil.ReadFile(file)
+	swaggerFile, err := os.ReadFile(file)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if string(body) != string(swaggerFile) {
-		t.Errorf("unexpected response body: got %s, want %s", body, swaggerFile)
+		t.Errorf("unexpected response body:\nGot:\n%s\n\nWant:\n%s", string(body), string(swaggerFile))
 	}
 }

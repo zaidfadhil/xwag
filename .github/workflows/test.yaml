@@ -1,41 +1,24 @@
-name: Test
+name: test
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   test:
     name: test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ["1.20"]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v4
+      - name: checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Install dependencies
+          go-version-file: go.mod
+          check-latest: true
+      - name: install dependencies
         run: |
-          go get -v -t -d ./...
-
-      - name: Run Test
+          go get -v -t ./...
+      - name: run test
         run: |
           go test -v -cover ./... -coverprofile coverage.out -coverpkg ./...
           go tool cover -func coverage.out -o coverage.out
-
-      - name: Go Coverage Badge
-        uses: tj-actions/coverage-badge-go@v1
-        with:
-          green: 60
-          filename: coverage.out

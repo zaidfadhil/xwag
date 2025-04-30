@@ -1,0 +1,40 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -X main.version={{ .Version }}
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - '386'
+      - arm64
+      - arm
+    goarm:
+      - '6'
+      - '7'
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  use: github
+  groups:
+    - title: 'New Features'
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: 'Bug fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: 'Other'
+      order: 999
+  filters:
+    exclude:
+      - typo
+      - "^test:"
+release:
+  prerelease: auto
+  mode: append
+  draft: false
