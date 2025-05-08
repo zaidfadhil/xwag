@@ -33,7 +33,7 @@ xwag -file <path_to_swagger_file>
 Once the server is started, you can access the Swagger UI by opening a web browser at:
 
 ```
-http://<server_address>:<server_port>.
+http://<server_address>:<server_port>
 ```
 
 ## License
