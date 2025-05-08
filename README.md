@@ -6,6 +6,14 @@
 
 ## Installation
 
+### Shell script
+
+Install xwag on macOS or Linux using the following command:
+
+```shell
+sudo curl -fsSL https://raw.githubusercontent.com/zaidfadhil/xwag/main/scripts/install.sh | sh
+```
+
 ### From Source
 
 ```bash
